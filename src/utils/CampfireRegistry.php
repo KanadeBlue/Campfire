@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace nicholass003\campfire\utils;
 
+use nicholass003\campfire\block\Beehive;
 use nicholass003\campfire\block\Campfire;
 use nicholass003\campfire\block\ExtraVanillaBlocks;
 use nicholass003\campfire\block\SoulCampfire;
@@ -56,6 +57,7 @@ class CampfireRegistry{
 
 	private static function registerCampfire() : void{
 		self::registerBlock(ExtraVanillaBlocks::CAMPFIRE(), ["campfire"]);
+        self::registerBlock(ExtraVanillaBlocks::BEE_HIVE(), ["beehive"]);
 		self::registerBlock(ExtraVanillaBlocks::SOUL_CAMPFIRE(), ["soul_campfire"]);
 	}
 
@@ -79,6 +81,9 @@ class CampfireRegistry{
 		GlobalBlockStateHandlers::getSerializer()->map(ExtraVanillaBlocks::SOUL_CAMPFIRE(),
 			fn(SoulCampfire $block) => self::encodeCampfire($block, BlockStateWriter::create(BlockTypeNames::SOUL_CAMPFIRE))
 		);
+        GlobalBlockStateHandlers::getSerializer()->map(ExtraVanillaBlocks::BEE_HIVE(),
+            fn(Beehive $block) => self::encodeBeeHive($block, BlockStateWriter::create("minecraft:beehive"))
+        );
 	}
 
 	private static function encodeCampfire(Campfire|SoulCampfire $block, BlockStateWriter $out) : BlockStateWriter{
@@ -87,12 +92,19 @@ class CampfireRegistry{
 			->writeBool(BlockStateNames::EXTINGUISHED, $block->isExtinguished());
 	}
 
+    private static function encodeBeeHive(Beehive $block, BlockStateWriter $out) : BlockStateWriter{
+        return $out
+            ->writeCardinalHorizontalFacing($block->getFacing())
+            ->writeBool(BlockStateNames::HONEY_LEVEL, $block->getHiveState());
+    }
+
 	private static function registerTile() : void{
 		$tileFactory = TileFactory::getInstance();
 		$tileFactory->register(TileCampfire::class, ["Campfire", "minecraft:campfire"]);
+        $tileFactory->register(TileCampfire::class, ["Beehive", "minecraft:beehive"]);
 	}
 
-	private static function registerBlock(Campfire|SoulCampfire $block, array $stringToItemParserNames) : void{
+	private static function registerBlock(Block $block, array $stringToItemParserNames) : void{
 		RuntimeBlockStateRegistry::getInstance()->register($block);
 		foreach($stringToItemParserNames as $name){
 			StringToItemParser::getInstance()->registerBlock($name, fn() => clone $block);
@@ -103,6 +115,7 @@ class CampfireRegistry{
 	private static function register1to1BlockMappings() : void{
 		self::map1to1Block(ItemTypeNames::CAMPFIRE, ExtraVanillaBlocks::CAMPFIRE());
 		self::map1to1Block(ItemTypeNames::SOUL_CAMPFIRE, ExtraVanillaBlocks::SOUL_CAMPFIRE());
+        self::map1to1Block("minecraft:beehive", ExtraVanillaBlocks::BEE_HIVE());
 	}
 
 	private static function map1to1Block(string $id, Block $block) : void{

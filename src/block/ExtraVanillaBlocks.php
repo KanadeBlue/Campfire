@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace nicholass003\campfire\block;
 
 use nicholass003\campfire\block\tile\Campfire as TileCampfire;
+use nicholass003\campfire\block\tile\Beehive as TileBeehive;
 use pocketmine\block\Block;
 use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockIdentifier;
@@ -41,6 +42,7 @@ use pocketmine\utils\CloningRegistryTrait;
  *
  * @method static Campfire CAMPFIRE()
  * @method static SoulCampfire SOUL_CAMPFIRE()
+ * @method static Beehive BEE_HIVE()
  */
 
 final class ExtraVanillaBlocks{
@@ -62,7 +64,8 @@ final class ExtraVanillaBlocks{
 	}
 
 	protected static function setup() : void{
-		self::register("campfire", new Campfire(new BlockIdentifier(BlockTypeIds::newId(), TileCampfire::class), "Campfire", new BlockTypeInfo(BlockBreakInfo::axe(2.0, ToolTier::WOOD))));
+        self::register("beehive", new Beehive(new BlockIdentifier(BlockTypeIds::newId(), TileBeehive::class), "Beehive", new BlockTypeInfo(BlockBreakInfo::axe(2.0, ToolTier::WOOD))));
+        self::register("campfire", new Campfire(new BlockIdentifier(BlockTypeIds::newId(), TileCampfire::class), "Campfire", new BlockTypeInfo(BlockBreakInfo::axe(2.0, ToolTier::WOOD))));
 		self::register("soul_campfire", new SoulCampfire(new BlockIdentifier(BlockTypeIds::newId(), TileCampfire::class), "Soul Campfire", new BlockTypeInfo(BlockBreakInfo::axe(2.0, ToolTier::WOOD))));
 	}
 }
